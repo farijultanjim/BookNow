@@ -75,7 +75,7 @@ const FlightSearchHero = () => {
     <div className="flex items-center justify-center h-screen">
       <div>
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-t-2xl w-full max-w-5xl mx-auto p-4 flex gap-8">
+        <div className="bg-white rounded-t-2xl w-full max-w-7xl mx-auto p-4 flex gap-8">
           <div className="flex items-center gap-2 border-b-4 border-yellow-400 pb-2">
             <Plane className="h-5 w-5 text-blue-900" />
             <span className="text-blue-900 font-semibold">Flight</span>
@@ -119,97 +119,86 @@ const FlightSearchHero = () => {
           </div>
 
           {/* Search Fields */}
-          <div className="grid grid-cols-5 gap-4">
-            {/* From */}
-            <div className="col-span-1">
-              <div className="space-y-1">
+          <div className="flex flex-col md:flex-row gap-2">
+            <div className="flex gap-2 relative">
+              {/* From */}
+              <div className="border-2 rounded-md px-4 py-2">
                 <label className="text-xs text-gray-600 uppercase">FROM</label>
                 <input
                   type="text"
                   value={fromLocation}
                   onChange={(e) => handleLocationChange(e.target.value, "from")}
-                  className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
-                  placeholder="Enter From Location"
+                  className="text-blue-900 font-semibold w-full border-none"
                 />
-                <input
-                  type="text"
-                  value={fromCode}
-                  readOnly
-                  className="text-xs text-gray-500 w-full border border-gray-300 rounded-md p-2"
-                />
+                <div className="text-xs text-gray-500 w-full ">{fromCode}</div>
               </div>
-            </div>
 
-            {/* Swap Icon */}
-            <div className="flex items-center justify-center">
-              <button
-                onClick={handleSwapLocations}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <ArrowLeftRight />
-              </button>
-            </div>
+              {/* Swap Icon */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-4 ">
+                <button
+                  onClick={handleSwapLocations}
+                  className="p-2 hover:bg-gray-100 rounded-full bg-white border"
+                >
+                  <ArrowLeftRight size={18} />
+                </button>
+              </div>
 
-            {/* To */}
-            <div className="col-span-1">
-              <div className="space-y-1">
-                <label className="text-xs text-gray-600 uppercase">TO</label>
+              {/* To */}
+              <div className="border-2 rounded-md px-4 py-2">
+                <label className="text-xs text-gray-600 uppercase">FROM</label>
                 <input
                   type="text"
                   value={toLocation}
-                  onChange={(e) => handleLocationChange(e.target.value, "to")}
-                  className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
-                  placeholder="Enter To Location"
+                  onChange={(e) => handleLocationChange(e.target.value, "from")}
+                  className="text-blue-900 font-semibold w-full border-none"
                 />
-                <input
-                  type="text"
-                  value={toCode}
-                  readOnly
-                  className="text-xs text-gray-500 w-full border border-gray-300 rounded-md p-2"
-                />
+                <div className="text-xs text-gray-500 w-full ">{toCode}</div>
               </div>
             </div>
 
             {/* Journey Date */}
-            <div className="col-span-1">
-              <div className="space-y-1">
-                <label className="text-xs text-gray-600 uppercase">
-                  JOURNEY DATE
-                </label>
-                <input
-                  type="date"
-                  value={journeyDate}
-                  onChange={(e) => setJourneyDate(e.target.value)}
-                  className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
-                />
-              </div>
+            <div className="border-2 rounded-md px-4 py-2">
+              <label className="text-xs text-gray-600 uppercase">
+                JOURNEY DATE
+              </label>
+              <input
+                type="date"
+                value={journeyDate}
+                onChange={(e) => setJourneyDate(e.target.value)}
+                className="text-blue-900 font-semibold w-full "
+              />
             </div>
 
             {/* Return Date */}
-            {tripType === "roundWay" && (
-              <div className="col-span-1">
-                <div className="space-y-1">
-                  <label className="text-xs text-gray-600 uppercase">
-                    RETURN DATE
-                  </label>
+
+            {tripType === "roundWay" || tripType === "oneWay" ? (
+              <div className="border-2 rounded-md px-4 py-2">
+                <label className="text-xs text-gray-600 uppercase">
+                  RETURN DATE
+                </label>
+                {tripType === "roundWay" ? (
                   <input
                     type="date"
                     value={returnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
-                    className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
+                    className="text-blue-900 font-semibold w-full "
                   />
-                </div>
+                ) : (
+                  <p className="text-sm text-gray-500 ">
+                    Save more on return flight
+                  </p>
+                )}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Multi-City Inputs */}
           {tripType === "multiCity" &&
             multiCityLocations.map((location, index) => (
-              <div key={index} className="grid grid-cols-5 gap-4 mt-4">
-                {/* From (Multi-City) */}
-                <div className="col-span-1">
-                  <div className="space-y-1">
+              <div key={index} className="flex gap-2 mt-4">
+                <div className="flex gap-2 relative">
+                  {/* From (For multicity) */}
+                  <div className="border-2 rounded-md px-4 py-2">
                     <label className="text-xs text-gray-600 uppercase">
                       FROM
                     </label>
@@ -219,23 +208,27 @@ const FlightSearchHero = () => {
                       onChange={(e) =>
                         handleLocationChange(e.target.value, "from", index)
                       }
-                      className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
-                      placeholder="Enter From Location"
+                      className="text-blue-900 font-semibold w-full border-none"
                     />
-                    <input
-                      type="text"
-                      value={location.fromCode}
-                      readOnly
-                      className="text-xs text-gray-500 w-full border border-gray-300 rounded-md p-2"
-                    />
+                    <div className="text-xs text-gray-500 w-full ">
+                      {fromCode}
+                    </div>
                   </div>
-                </div>
 
-                {/* To (Multi-City) */}
-                <div className="col-span-1">
-                  <div className="space-y-1">
+                  {/* Swap Icon */}
+                  <div className="absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-4 ">
+                    <button
+                      onClick={handleSwapLocations}
+                      className="p-2 hover:bg-gray-100 rounded-full bg-white border"
+                    >
+                      <ArrowLeftRight size={18} />
+                    </button>
+                  </div>
+
+                  {/* To (For multicity) */}
+                  <div className="border-2 rounded-md px-4 py-2">
                     <label className="text-xs text-gray-600 uppercase">
-                      TO
+                      FROM
                     </label>
                     <input
                       type="text"
@@ -243,16 +236,23 @@ const FlightSearchHero = () => {
                       onChange={(e) =>
                         handleLocationChange(e.target.value, "to", index)
                       }
-                      className="text-blue-900 font-semibold w-full border border-gray-300 rounded-md p-2"
-                      placeholder="Enter To Location"
+                      className="text-blue-900 font-semibold w-full border-none"
                     />
-                    <input
-                      type="text"
-                      value={location.toCode}
-                      readOnly
-                      className="text-xs text-gray-500 w-full border border-gray-300 rounded-md p-2"
-                    />
+                    <div className="text-xs text-gray-500 w-full ">
+                      {toCode}
+                    </div>
                   </div>
+                </div>
+                <div className="border-2 rounded-md px-4 py-2">
+                  <label className="text-xs text-gray-600 uppercase">
+                    JOURNEY DATE
+                  </label>
+                  <input
+                    type="date"
+                    value={journeyDate}
+                    onChange={(e) => setJourneyDate(e.target.value)}
+                    className="text-blue-900 font-semibold w-full "
+                  />
                 </div>
               </div>
             ))}
