@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowLeftRight, Plane } from "lucide-react";
+import { ArrowLeftRight, Plane, X } from "lucide-react";
 
 const FlightSearchHero = () => {
   const [tripType, setTripType] = useState("oneWay");
@@ -15,7 +15,7 @@ const FlightSearchHero = () => {
   const [returnDate, setReturnDate] = useState("2024-10-31");
   const [travelers, setTravelers] = useState(1);
   const [multiCityLocations, setMultiCityLocations] = useState([
-    { from: "", fromCode: "", to: "", toCode: "" },
+    { from: "", fromCode: "", to: "", toCode: "", date: "" },
   ]);
 
   const handleSwapLocations = () => {
@@ -30,23 +30,15 @@ const FlightSearchHero = () => {
   const handleAddMultiCity = () => {
     setMultiCityLocations([
       ...multiCityLocations,
-      { from: "", fromCode: "", to: "", toCode: "" },
+      { from: "", fromCode: "", to: "", toCode: "", date: "" },
     ]);
   };
 
-  const handleSubmit = () => {
-    const searchParams = {
-      tripType,
-      fromLocation,
-      toLocation,
-      journeyDate,
-      returnDate: tripType === "roundWay" ? returnDate : null,
-      travelers,
-      multiCityLocations: tripType === "multiCity" ? multiCityLocations : [],
-    };
-
-    // You'd typically send the searchParams to your flight API or route handler
-    console.log("Searching with parameters:", searchParams);
+  const handleDeleteLocation = (index) => {
+    if (multiCityLocations.length > 1) {
+      const updatedLocations = multiCityLocations.filter((_, i) => i !== index);
+      setMultiCityLocations(updatedLocations);
+    }
   };
 
   const handleLocationChange = (value, type, index = null) => {
@@ -58,6 +50,8 @@ const FlightSearchHero = () => {
       } else if (type === "to") {
         updatedLocations[index].to = value;
         updatedLocations[index].toCode = `Code for ${value}`;
+      } else if (type === "date") {
+        updatedLocations[index].date = value;
       }
       setMultiCityLocations(updatedLocations);
     } else {
@@ -71,208 +65,143 @@ const FlightSearchHero = () => {
     }
   };
 
+  const handleSubmit = () => {
+    const searchParams = {
+      tripType,
+      fromLocation,
+      toLocation,
+      journeyDate,
+      returnDate: tripType === "roundWay" ? returnDate : null,
+      travelers,
+      multiCityLocations: tripType === "multiCity" ? multiCityLocations : [],
+    };
+    console.log("Searching with parameters:", searchParams);
+  };
+
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div>
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-t-2xl w-full max-w-7xl mx-auto p-4 flex gap-8">
-          <div className="flex items-center gap-2 border-b-4 border-yellow-400 pb-2">
-            <Plane className="h-5 w-5 text-blue-900" />
-            <span className="text-blue-900 font-semibold">Flight</span>
-          </div>
+    <div className="w-full max-w-6xl mx-auto">
+      {/* Navigation Tabs */}
+      <div className="bg-white rounded-t-2xl p-4">
+        <div className="flex items-center gap-2 border-b-4 border-yellow-400 pb-2 w-fit">
+          <Plane className="h-5 w-5 text-blue-900" />
+          <span className="text-blue-900 font-semibold">Flight</span>
+        </div>
+      </div>
+
+      {/* Search Form */}
+      <div className="bg-white rounded-b-2xl p-6 space-y-6">
+        {/* Trip Type Selection */}
+        <div className="flex flex-wrap gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="tripType"
+              checked={tripType === "oneWay"}
+              onChange={() => setTripType("oneWay")}
+              className="w-4 h-4 text-blue-900"
+            />
+            <span className="text-blue-900 font-semibold">One Way</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="tripType"
+              checked={tripType === "roundWay"}
+              onChange={() => setTripType("roundWay")}
+              className="w-4 h-4 text-blue-900"
+            />
+            <span className="text-blue-900 font-semibold">Round Way</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="tripType"
+              checked={tripType === "multiCity"}
+              onChange={() => setTripType("multiCity")}
+              className="w-4 h-4 text-blue-900"
+            />
+            <span className="text-blue-900 font-semibold">Multi City</span>
+          </label>
         </div>
 
-        {/* Search Form */}
-        <div className="bg-white rounded-b-2xl w-full max-w-5xl mx-auto p-6">
-          {/* Trip Type Selection */}
-          <div className="flex gap-6 mb-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="tripType"
-                checked={tripType === "oneWay"}
-                onChange={() => setTripType("oneWay")}
-                className="w-4 h-4 text-blue-900"
-              />
-              <span className="text-blue-900 font-semibold">One Way</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="tripType"
-                checked={tripType === "roundWay"}
-                onChange={() => setTripType("roundWay")}
-                className="w-4 h-4 text-blue-900"
-              />
-              <span className="text-blue-900 font-semibold">Round Way</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="tripType"
-                checked={tripType === "multiCity"}
-                onChange={() => setTripType("multiCity")}
-                className="w-4 h-4 text-blue-900"
-              />
-              <span className="text-blue-900 font-semibold">Multi City</span>
-            </label>
-          </div>
-
-          {/* Search Fields */}
-          <div className="flex flex-col md:flex-row gap-2">
-            <div className="flex gap-2 relative">
+        {/* Main Search Grid */}
+        <div className="space-y-6">
+          {/* First Row - Common for all trip types */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* From/To Container */}
+            <div className="md:col-span-2 grid grid-cols-2 gap-2 relative">
               {/* From */}
-              <div className="border-2 rounded-md px-4 py-2">
-                <label className="text-xs text-gray-600 uppercase">FROM</label>
+              <div className="border-2 rounded-md p-3 bg-white">
+                <label className="text-xs text-gray-600 uppercase block mb-1">
+                  FROM
+                </label>
                 <input
                   type="text"
                   value={fromLocation}
                   onChange={(e) => handleLocationChange(e.target.value, "from")}
-                  className="text-blue-900 font-semibold w-full border-none"
+                  className="text-blue-900 font-semibold w-full outline-none"
                 />
-                <div className="text-xs text-gray-500 w-full ">{fromCode}</div>
+                <div className="text-xs text-gray-500 truncate">{fromCode}</div>
               </div>
 
-              {/* Swap Icon */}
-              <div className="absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-4 ">
-                <button
-                  onClick={handleSwapLocations}
-                  className="p-2 hover:bg-gray-100 rounded-full bg-white border"
-                >
-                  <ArrowLeftRight size={18} />
-                </button>
-              </div>
+              {/* Swap Button */}
+              <button
+                onClick={handleSwapLocations}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full bg-white border shadow-sm z-10"
+              >
+                <ArrowLeftRight size={18} />
+              </button>
 
               {/* To */}
-              <div className="border-2 rounded-md px-4 py-2">
-                <label className="text-xs text-gray-600 uppercase">FROM</label>
+              <div className="border-2 rounded-md p-3 bg-white">
+                <label className="text-xs text-gray-600 uppercase block mb-1">
+                  TO
+                </label>
                 <input
                   type="text"
                   value={toLocation}
-                  onChange={(e) => handleLocationChange(e.target.value, "from")}
-                  className="text-blue-900 font-semibold w-full border-none"
+                  onChange={(e) => handleLocationChange(e.target.value, "to")}
+                  className="text-blue-900 font-semibold w-full outline-none"
                 />
-                <div className="text-xs text-gray-500 w-full ">{toCode}</div>
+                <div className="text-xs text-gray-500 truncate">{toCode}</div>
               </div>
             </div>
 
             {/* Journey Date */}
-            <div className="border-2 rounded-md px-4 py-2">
-              <label className="text-xs text-gray-600 uppercase">
+            <div className="border-2 rounded-md p-3 bg-white">
+              <label className="text-xs text-gray-600 uppercase block mb-1">
                 JOURNEY DATE
               </label>
               <input
                 type="date"
                 value={journeyDate}
                 onChange={(e) => setJourneyDate(e.target.value)}
-                className="text-blue-900 font-semibold w-full "
+                className="text-blue-900 font-semibold w-full outline-none"
               />
             </div>
 
             {/* Return Date */}
-
-            {tripType === "roundWay" || tripType === "oneWay" ? (
-              <div className="border-2 rounded-md px-4 py-2">
-                <label className="text-xs text-gray-600 uppercase">
-                  RETURN DATE
-                </label>
-                {tripType === "roundWay" ? (
-                  <input
-                    type="date"
-                    value={returnDate}
-                    onChange={(e) => setReturnDate(e.target.value)}
-                    className="text-blue-900 font-semibold w-full "
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500 ">
-                    Save more on return flight
-                  </p>
-                )}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Multi-City Inputs */}
-          {tripType === "multiCity" &&
-            multiCityLocations.map((location, index) => (
-              <div key={index} className="flex gap-2 mt-4">
-                <div className="flex gap-2 relative">
-                  {/* From (For multicity) */}
-                  <div className="border-2 rounded-md px-4 py-2">
-                    <label className="text-xs text-gray-600 uppercase">
-                      FROM
-                    </label>
-                    <input
-                      type="text"
-                      value={location.from}
-                      onChange={(e) =>
-                        handleLocationChange(e.target.value, "from", index)
-                      }
-                      className="text-blue-900 font-semibold w-full border-none"
-                    />
-                    <div className="text-xs text-gray-500 w-full ">
-                      {fromCode}
-                    </div>
-                  </div>
-
-                  {/* Swap Icon */}
-                  <div className="absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-4 ">
-                    <button
-                      onClick={handleSwapLocations}
-                      className="p-2 hover:bg-gray-100 rounded-full bg-white border"
-                    >
-                      <ArrowLeftRight size={18} />
-                    </button>
-                  </div>
-
-                  {/* To (For multicity) */}
-                  <div className="border-2 rounded-md px-4 py-2">
-                    <label className="text-xs text-gray-600 uppercase">
-                      FROM
-                    </label>
-                    <input
-                      type="text"
-                      value={location.to}
-                      onChange={(e) =>
-                        handleLocationChange(e.target.value, "to", index)
-                      }
-                      className="text-blue-900 font-semibold w-full border-none"
-                    />
-                    <div className="text-xs text-gray-500 w-full ">
-                      {toCode}
-                    </div>
-                  </div>
-                </div>
-                <div className="border-2 rounded-md px-4 py-2">
-                  <label className="text-xs text-gray-600 uppercase">
-                    JOURNEY DATE
-                  </label>
-                  <input
-                    type="date"
-                    value={journeyDate}
-                    onChange={(e) => setJourneyDate(e.target.value)}
-                    className="text-blue-900 font-semibold w-full "
-                  />
-                </div>
-              </div>
-            ))}
-
-          {/* Add Multi-City Button */}
-          {tripType === "multiCity" && (
-            <div className="mt-4">
-              <button
-                onClick={handleAddMultiCity}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Add More City
-              </button>
+            <div className="border-2 rounded-md p-3 bg-white">
+              <label className="text-xs text-gray-600 uppercase block mb-1">
+                RETURN DATE
+              </label>
+              {tripType === "roundWay" ? (
+                <input
+                  type="date"
+                  value={returnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  className="text-blue-900 font-semibold w-full outline-none"
+                />
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Save more on return flight
+                </p>
+              )}
             </div>
-          )}
 
-          {/* Travelers Input */}
-          <div className="mt-6">
-            <div className="flex gap-4 items-center">
-              <label className="text-xs text-gray-600 uppercase">
+            {/* Travelers - Common for all trip types */}
+            <div className="border-2 rounded-md p-3 bg-white">
+              <label className="text-xs text-gray-600 uppercase block mb-1">
                 TRAVELERS
               </label>
               <input
@@ -280,20 +209,107 @@ const FlightSearchHero = () => {
                 min="1"
                 value={travelers}
                 onChange={(e) => setTravelers(e.target.value)}
-                className="text-blue-900 font-semibold w-16 border border-gray-300 rounded-md p-2"
+                className="text-blue-900 font-semibold w-24 border border-gray-300 rounded-md p-2 outline-none"
               />
             </div>
           </div>
 
-          {/* Submit Button */}
-          <div className="mt-6">
-            <button
-              onClick={handleSubmit}
-              className="bg-yellow-500 text-white px-6 py-3 rounded-md font-semibold"
-            >
-              Search Flights
-            </button>
-          </div>
+          {/* Additional Multi-City Locations */}
+          {tripType === "multiCity" && (
+            <div className="space-y-4">
+              {multiCityLocations.map((location, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-1 md:grid-cols-7 gap-4"
+                >
+                  <div className="md:col-span-3 grid grid-cols-2 gap-2">
+                    {/* From */}
+                    <div className="border-2 rounded-md p-3 bg-white">
+                      <label className="text-xs text-gray-600 uppercase block mb-1">
+                        FROM
+                      </label>
+                      <input
+                        type="text"
+                        value={location.from}
+                        placeholder="Select a City"
+                        onChange={(e) =>
+                          handleLocationChange(e.target.value, "from", index)
+                        }
+                        className="text-blue-900 font-semibold w-full outline-none"
+                      />
+                      <div className="text-xs text-gray-500 truncate">
+                        {location.fromCode}
+                      </div>
+                    </div>
+
+                    {/* To */}
+                    <div className="border-2 rounded-md p-3 bg-white">
+                      <label className="text-xs text-gray-600 uppercase block mb-1">
+                        TO
+                      </label>
+                      <input
+                        type="text"
+                        value={location.to}
+                        placeholder="Select a City"
+                        onChange={(e) =>
+                          handleLocationChange(e.target.value, "to", index)
+                        }
+                        className="text-blue-900 font-semibold w-full outline-none"
+                      />
+                      <div className="text-xs text-gray-500 truncate">
+                        {location.toCode}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Journey Date */}
+                  <div className="md:col-span-2 border-2 rounded-md p-3 bg-white">
+                    <label className="text-xs text-gray-600 uppercase block mb-1">
+                      JOURNEY DATE
+                    </label>
+                    <input
+                      type="date"
+                      value={location.date}
+                      onChange={(e) =>
+                        handleLocationChange(e.target.value, "date", index)
+                      }
+                      className="text-blue-900 font-semibold w-full outline-none"
+                    />
+                  </div>
+
+                  {/* Delete Button */}
+                  {index > 0 && (
+                    <div className="flex items-center justify-end md:col-span-2">
+                      <button
+                        onClick={() => handleDeleteLocation(index)}
+                        className="p-2 hover:bg-red-50 text-red-500 rounded-full"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Add City Button */}
+              <button
+                onClick={handleAddMultiCity}
+                className="w-full md:w-auto border-2 rounded-md px-6 py-3 text-blue-900 font-semibold hover:bg-gray-50"
+              >
+                Add More City
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-center pt-4">
+          <button
+            onClick={handleSubmit}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-md font-semibold transition-colors"
+          >
+            Search Flights
+          </button>
         </div>
       </div>
     </div>
