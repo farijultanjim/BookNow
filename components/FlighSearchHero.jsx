@@ -79,7 +79,7 @@ const FlightSearchHero = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       {/* Navigation Tabs */}
       <div className="bg-white rounded-t-2xl p-4">
         <div className="flex items-center gap-2 border-b-4 border-yellow-400 pb-2 w-fit">
@@ -127,8 +127,14 @@ const FlightSearchHero = () => {
         {/* Main Search Grid */}
         <div className="space-y-6">
           {/* First Row - Common for all trip types */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* From/To Container */}
+          <div
+            className={`grid gap-4 ${
+              tripType === "multiCity"
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-1"
+                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-5"
+            }`}
+          >
+            {/* From/To Container - Takes 2 columns in all layouts */}
             <div className="md:col-span-2 grid grid-cols-2 gap-2 relative">
               {/* From */}
               <div className="border-2 rounded-md p-3 bg-white">
@@ -180,24 +186,26 @@ const FlightSearchHero = () => {
               />
             </div>
 
-            {/* Return Date */}
-            <div className="border-2 rounded-md p-3 bg-white">
-              <label className="text-xs text-gray-600 uppercase block mb-1">
-                RETURN DATE
-              </label>
-              {tripType === "roundWay" ? (
-                <input
-                  type="date"
-                  value={returnDate}
-                  onChange={(e) => setReturnDate(e.target.value)}
-                  className="text-blue-900 font-semibold w-full outline-none"
-                />
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Save more on return flight
-                </p>
-              )}
-            </div>
+            {/* Return Date - Only show for non-multiCity */}
+            {tripType !== "multiCity" && (
+              <div className="border-2 rounded-md p-3 bg-white">
+                <label className="text-xs text-gray-600 uppercase block mb-1">
+                  RETURN DATE
+                </label>
+                {tripType === "roundWay" ? (
+                  <input
+                    type="date"
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    className="text-blue-900 font-semibold w-full outline-none"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Save more on return flight
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Travelers - Common for all trip types */}
             <div className="border-2 rounded-md p-3 bg-white">
@@ -220,50 +228,48 @@ const FlightSearchHero = () => {
               {multiCityLocations.map((location, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-7 gap-4"
+                  className="grid grid-cols-1 md:grid-cols-4 gap-4"
                 >
-                  <div className="md:col-span-3 grid grid-cols-2 gap-2">
-                    {/* From */}
-                    <div className="border-2 rounded-md p-3 bg-white">
-                      <label className="text-xs text-gray-600 uppercase block mb-1">
-                        FROM
-                      </label>
-                      <input
-                        type="text"
-                        value={location.from}
-                        placeholder="Select a City"
-                        onChange={(e) =>
-                          handleLocationChange(e.target.value, "from", index)
-                        }
-                        className="text-blue-900 font-semibold w-full outline-none"
-                      />
-                      <div className="text-xs text-gray-500 truncate">
-                        {location.fromCode}
-                      </div>
+                  {/* From */}
+                  <div className="border-2 rounded-md p-3 bg-white">
+                    <label className="text-xs text-gray-600 uppercase block mb-1">
+                      FROM
+                    </label>
+                    <input
+                      type="text"
+                      value={location.from}
+                      placeholder="Select a city"
+                      onChange={(e) =>
+                        handleLocationChange(e.target.value, "from", index)
+                      }
+                      className="text-blue-900 font-semibold w-full outline-none"
+                    />
+                    <div className="text-xs text-gray-500">
+                      Click to choose an airport
                     </div>
+                  </div>
 
-                    {/* To */}
-                    <div className="border-2 rounded-md p-3 bg-white">
-                      <label className="text-xs text-gray-600 uppercase block mb-1">
-                        TO
-                      </label>
-                      <input
-                        type="text"
-                        value={location.to}
-                        placeholder="Select a City"
-                        onChange={(e) =>
-                          handleLocationChange(e.target.value, "to", index)
-                        }
-                        className="text-blue-900 font-semibold w-full outline-none"
-                      />
-                      <div className="text-xs text-gray-500 truncate">
-                        {location.toCode}
-                      </div>
+                  {/* To */}
+                  <div className="border-2 rounded-md p-3 bg-white">
+                    <label className="text-xs text-gray-600 uppercase block mb-1">
+                      TO
+                    </label>
+                    <input
+                      type="text"
+                      value={location.to}
+                      placeholder="Select a city"
+                      onChange={(e) =>
+                        handleLocationChange(e.target.value, "to", index)
+                      }
+                      className="text-blue-900 font-semibold w-full outline-none"
+                    />
+                    <div className="text-xs text-gray-500">
+                      Click to choose an airport
                     </div>
                   </div>
 
                   {/* Journey Date */}
-                  <div className="md:col-span-2 border-2 rounded-md p-3 bg-white">
+                  <div className="border-2 rounded-md p-3 bg-white">
                     <label className="text-xs text-gray-600 uppercase block mb-1">
                       JOURNEY DATE
                     </label>
@@ -274,30 +280,30 @@ const FlightSearchHero = () => {
                         handleLocationChange(e.target.value, "date", index)
                       }
                       className="text-blue-900 font-semibold w-full outline-none"
+                      placeholder="Pick a date"
                     />
                   </div>
 
-                  {/* Delete Button */}
-                  {index > 0 && (
-                    <div className="flex items-center justify-end md:col-span-2">
+                  {/* Action Column (Delete or Add Another City) */}
+                  <div className="flex items-center border-2 rounded-md p-3 bg-white justify-center">
+                    {index === multiCityLocations.length - 1 ? (
+                      <button
+                        onClick={handleAddMultiCity}
+                        className="text-blue-900 font-semibold w-full h-full"
+                      >
+                        Add Another City
+                      </button>
+                    ) : (
                       <button
                         onClick={() => handleDeleteLocation(index)}
                         className="p-2 hover:bg-red-50 text-red-500 rounded-full"
                       >
                         <X size={20} />
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               ))}
-
-              {/* Add City Button */}
-              <button
-                onClick={handleAddMultiCity}
-                className="w-full md:w-auto border-2 rounded-md px-6 py-3 text-blue-900 font-semibold hover:bg-gray-50"
-              >
-                Add More City
-              </button>
             </div>
           )}
         </div>
