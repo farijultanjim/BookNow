@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowLeftRight, Plane, X } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { ArrowLeftRight, Calendar, Plane, X } from "lucide-react";
 
 const FlightSearchHero = () => {
   const [tripType, setTripType] = useState("oneWay");
@@ -17,6 +17,26 @@ const FlightSearchHero = () => {
   const [multiCityLocations, setMultiCityLocations] = useState([
     { from: "", fromCode: "", to: "", toCode: "", date: "" },
   ]);
+
+  // Create refs for date inputs
+  const primaryJourneyDateRef = useRef(null);
+  const returnDateRef = useRef(null);
+  const multiCityDateRefs = useRef([]);
+
+  // Initialize refs for multi-city dates
+  React.useEffect(() => {
+    multiCityDateRefs.current = multiCityLocations.map(() => React.createRef());
+  }, [multiCityLocations.length]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "short" });
+    const year = date.getFullYear().toString().slice(2);
+    const weekday = date.toLocaleString("default", { weekday: "long" });
+    return `${day} ${month}'${year} ${weekday}`;
+  };
 
   const handleSwapLocations = () => {
     const tempLocation = fromLocation;
@@ -134,7 +154,7 @@ const FlightSearchHero = () => {
                 : "grid-cols-1 md:grid-cols-2 lg:grid-cols-5"
             }`}
           >
-            {/* From/To Container - Takes 2 columns in all layouts */}
+            {/* From/To Container */}
             <div className="md:col-span-2 grid grid-cols-2 gap-2 relative">
               {/* From */}
               <div className="border-2 rounded-md p-3 bg-white">
@@ -174,40 +194,60 @@ const FlightSearchHero = () => {
             </div>
 
             {/* Journey Date */}
-            <div className="border-2 rounded-md p-3 bg-white">
+            <button
+              onClick={() => primaryJourneyDateRef.current?.showPicker()}
+              className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+            >
               <label className="text-xs text-gray-600 uppercase block mb-1">
                 JOURNEY DATE
               </label>
+              <div className="text-blue-900 font-semibold">
+                {formatDate(journeyDate)}
+              </div>
+              <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="date"
+                ref={primaryJourneyDateRef}
                 value={journeyDate}
                 onChange={(e) => setJourneyDate(e.target.value)}
-                className="text-blue-900 font-semibold w-full outline-none"
+                className="hidden"
               />
-            </div>
+            </button>
 
             {/* Return Date - Only show for non-multiCity */}
-            {tripType !== "multiCity" && (
-              <div className="border-2 rounded-md p-3 bg-white">
-                <label className="text-xs text-gray-600 uppercase block mb-1">
-                  RETURN DATE
-                </label>
-                {tripType === "roundWay" ? (
+            {tripType !== "multiCity" &&
+              (tripType === "roundWay" ? (
+                <button
+                  onClick={() => returnDateRef.current?.showPicker()}
+                  className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+                >
+                  <label className="text-xs text-gray-600 uppercase block mb-1">
+                    RETURN DATE
+                  </label>
+                  <div className="text-blue-900 font-semibold">
+                    {formatDate(returnDate)}
+                  </div>
+                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input
                     type="date"
+                    ref={returnDateRef}
                     value={returnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
-                    className="text-blue-900 font-semibold w-full outline-none"
+                    className="hidden"
                   />
-                ) : (
-                  <p className="text-sm text-gray-500">
+                </button>
+              ) : (
+                <div className="border-2 rounded-md p-3 bg-white text-left relative">
+                  <label className="text-xs text-gray-600 uppercase block mb-1">
+                    RETURN DATE
+                  </label>
+                  <p className="text-xs text-gray-500">
                     Save more on return flight
                   </p>
-                )}
-              </div>
-            )}
+                </div>
+              ))}
 
-            {/* Travelers - Common for all trip types */}
+            {/* Travelers */}
             <div className="border-2 rounded-md p-3 bg-white">
               <label className="text-xs text-gray-600 uppercase block mb-1">
                 TRAVELERS
@@ -216,7 +256,7 @@ const FlightSearchHero = () => {
                 type="number"
                 min="1"
                 value={travelers}
-                onChange={(e) => setTravelers(e.target.value)}
+                onChange={(e) => setTravelers(parseInt(e.target.value))}
                 className="text-blue-900 font-semibold w-24 border border-gray-300 rounded-md p-2 outline-none"
               />
             </div>
@@ -269,22 +309,31 @@ const FlightSearchHero = () => {
                   </div>
 
                   {/* Journey Date */}
-                  <div className="border-2 rounded-md p-3 bg-white">
+                  <button
+                    onClick={() =>
+                      multiCityDateRefs.current[index]?.current?.showPicker()
+                    }
+                    className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+                  >
                     <label className="text-xs text-gray-600 uppercase block mb-1">
                       JOURNEY DATE
                     </label>
+                    <div className="text-blue-900 font-semibold">
+                      {formatDate(location.date)}
+                    </div>
+                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                     <input
                       type="date"
+                      ref={multiCityDateRefs.current[index]}
                       value={location.date}
                       onChange={(e) =>
                         handleLocationChange(e.target.value, "date", index)
                       }
-                      className="text-blue-900 font-semibold w-full outline-none"
-                      placeholder="Pick a date"
+                      className="hidden"
                     />
-                  </div>
+                  </button>
 
-                  {/* Action Column (Delete or Add Another City) */}
+                  {/* Action Column */}
                   <div className="flex items-center border-2 rounded-md p-3 bg-white justify-center">
                     {index === multiCityLocations.length - 1 ? (
                       <button
