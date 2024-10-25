@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { ArrowLeftRight, Calendar, Plane, X } from "lucide-react";
+import TravelerSelector from "./TravelerSelector";
 
 const FlightSearchHero = () => {
   const [tripType, setTripType] = useState("oneWay");
@@ -85,6 +86,8 @@ const FlightSearchHero = () => {
     }
   };
 
+
+
   const handleSubmit = () => {
     const searchParams = {
       tripType,
@@ -99,10 +102,10 @@ const FlightSearchHero = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       {/* Navigation Tabs */}
       <div className="bg-white rounded-t-2xl p-4">
-        <div className="flex items-center gap-2 border-b-4 border-yellow-400 pb-2 w-fit">
+        <div className="flex items-center gap-2 border-b-4 border-[#FDCC02] pb-2 w-fit">
           <Plane className="h-5 w-5 text-blue-900" />
           <span className="text-blue-900 font-semibold">Flight</span>
         </div>
@@ -157,7 +160,7 @@ const FlightSearchHero = () => {
             {/* From/To Container */}
             <div className="md:col-span-2 grid grid-cols-2 gap-2 relative">
               {/* From */}
-              <div className="border-2 rounded-md p-3 bg-white">
+              <div className="border-2 rounded-md py-3 px-6 bg-white">
                 <label className="text-xs text-gray-600 uppercase block mb-1">
                   FROM
                 </label>
@@ -179,7 +182,7 @@ const FlightSearchHero = () => {
               </button>
 
               {/* To */}
-              <div className="border-2 rounded-md p-3 bg-white">
+              <div className="border-2 rounded-md py-3 px-6 bg-white">
                 <label className="text-xs text-gray-600 uppercase block mb-1">
                   TO
                 </label>
@@ -196,7 +199,7 @@ const FlightSearchHero = () => {
             {/* Journey Date */}
             <button
               onClick={() => primaryJourneyDateRef.current?.showPicker()}
-              className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+              className="border-2 rounded-md py-3 px-6 bg-white text-left relative hover:border-blue-500 transition-colors"
             >
               <label className="text-xs text-gray-600 uppercase block mb-1">
                 JOURNEY DATE
@@ -204,6 +207,7 @@ const FlightSearchHero = () => {
               <div className="text-blue-900 font-semibold">
                 {formatDate(journeyDate)}
               </div>
+
               <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="date"
@@ -219,7 +223,7 @@ const FlightSearchHero = () => {
               (tripType === "roundWay" ? (
                 <button
                   onClick={() => returnDateRef.current?.showPicker()}
-                  className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+                  className="border-2 rounded-md py-3 px-6 bg-white text-left relative hover:border-blue-500 transition-colors"
                 >
                   <label className="text-xs text-gray-600 uppercase block mb-1">
                     RETURN DATE
@@ -237,7 +241,7 @@ const FlightSearchHero = () => {
                   />
                 </button>
               ) : (
-                <div className="border-2 rounded-md p-3 bg-white text-left relative">
+                <div className="border-2 rounded-md py-3 px-6 bg-white text-left relative">
                   <label className="text-xs text-gray-600 uppercase block mb-1">
                     RETURN DATE
                   </label>
@@ -248,18 +252,10 @@ const FlightSearchHero = () => {
               ))}
 
             {/* Travelers */}
-            <div className="border-2 rounded-md p-3 bg-white">
-              <label className="text-xs text-gray-600 uppercase block mb-1">
-                TRAVELERS
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={travelers}
-                onChange={(e) => setTravelers(parseInt(e.target.value))}
-                className="text-blue-900 font-semibold w-24 border border-gray-300 rounded-md p-2 outline-none"
-              />
-            </div>
+            <TravelerSelector
+              travelers={travelers}
+              onTravelersChange={setTravelers}
+            />
           </div>
 
           {/* Additional Multi-City Locations */}
@@ -271,7 +267,7 @@ const FlightSearchHero = () => {
                   className="grid grid-cols-1 md:grid-cols-4 gap-4"
                 >
                   {/* From */}
-                  <div className="border-2 rounded-md p-3 bg-white">
+                  <div className="border-2 rounded-md py-3 px-6 bg-white">
                     <label className="text-xs text-gray-600 uppercase block mb-1">
                       FROM
                     </label>
@@ -290,7 +286,7 @@ const FlightSearchHero = () => {
                   </div>
 
                   {/* To */}
-                  <div className="border-2 rounded-md p-3 bg-white">
+                  <div className="border-2 rounded-md py-3 px-6 bg-white">
                     <label className="text-xs text-gray-600 uppercase block mb-1">
                       TO
                     </label>
@@ -313,7 +309,7 @@ const FlightSearchHero = () => {
                     onClick={() =>
                       multiCityDateRefs.current[index]?.current?.showPicker()
                     }
-                    className="border-2 rounded-md p-3 bg-white text-left relative hover:border-blue-500 transition-colors"
+                    className="border-2 rounded-md py-3 px-6 bg-white text-left relative hover:border-blue-500 transition-colors"
                   >
                     <label className="text-xs text-gray-600 uppercase block mb-1">
                       JOURNEY DATE
@@ -334,7 +330,7 @@ const FlightSearchHero = () => {
                   </button>
 
                   {/* Action Column */}
-                  <div className="flex items-center border-2 rounded-md p-3 bg-white justify-center">
+                  <div className="flex items-center border-2 rounded-md py-3 px-6 bg-white justify-center">
                     {index === multiCityLocations.length - 1 ? (
                       <button
                         onClick={handleAddMultiCity}
@@ -361,7 +357,7 @@ const FlightSearchHero = () => {
         <div className="flex justify-center pt-4">
           <button
             onClick={handleSubmit}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-md font-semibold transition-colors"
+            className="bg-[#FDCC02] hover:bg-[#FDCC02]/80 text-blue-900 px-8 py-3 rounded-md font-semibold transition-colors"
           >
             Search Flights
           </button>
