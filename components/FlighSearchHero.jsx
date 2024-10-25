@@ -266,41 +266,43 @@ const FlightSearchHero = () => {
                   key={index}
                   className="grid grid-cols-1 md:grid-cols-4 gap-4"
                 >
-                  {/* From */}
-                  <div className="border-2 rounded-md py-3 px-6 bg-white">
-                    <label className="text-xs text-gray-600 uppercase block mb-1">
-                      FROM
-                    </label>
-                    <input
-                      type="text"
-                      value={location.from}
-                      placeholder="Select a city"
-                      onChange={(e) =>
-                        handleLocationChange(e.target.value, "from", index)
-                      }
-                      className="text-blue-900 font-semibold w-full outline-none"
-                    />
-                    <div className="text-xs text-gray-500">
-                      Click to choose an airport
+                  <div className="grid grid-cols-2 md:col-span-2 gap-2">
+                    {/* From */}
+                    <div className="border-2 rounded-md py-3 px-6 bg-white">
+                      <label className="text-xs text-gray-600 uppercase block mb-1">
+                        FROM
+                      </label>
+                      <input
+                        type="text"
+                        value={location.from}
+                        placeholder="Select a city"
+                        onChange={(e) =>
+                          handleLocationChange(e.target.value, "from", index)
+                        }
+                        className="text-blue-900 font-semibold w-full outline-none"
+                      />
+                      <div className="text-xs text-gray-500">
+                        Click to choose an airport
+                      </div>
                     </div>
-                  </div>
 
-                  {/* To */}
-                  <div className="border-2 rounded-md py-3 px-6 bg-white">
-                    <label className="text-xs text-gray-600 uppercase block mb-1">
-                      TO
-                    </label>
-                    <input
-                      type="text"
-                      value={location.to}
-                      placeholder="Select a city"
-                      onChange={(e) =>
-                        handleLocationChange(e.target.value, "to", index)
-                      }
-                      className="text-blue-900 font-semibold w-full outline-none"
-                    />
-                    <div className="text-xs text-gray-500">
-                      Click to choose an airport
+                    {/* To */}
+                    <div className="border-2 rounded-md py-3 px-6 bg-white">
+                      <label className="text-xs text-gray-600 uppercase block mb-1">
+                        TO
+                      </label>
+                      <input
+                        type="text"
+                        value={location.to}
+                        placeholder="Select a city"
+                        onChange={(e) =>
+                          handleLocationChange(e.target.value, "to", index)
+                        }
+                        className="text-blue-900 font-semibold w-full outline-none"
+                      />
+                      <div className="text-xs text-gray-500">
+                        Click to choose an airport
+                      </div>
                     </div>
                   </div>
 
